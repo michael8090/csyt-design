@@ -9,7 +9,6 @@
 {-# LANGUAGE QuasiQuotes                #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
-
 module Main where
 
 import Web.Spock
@@ -25,6 +24,7 @@ import Database.Persist hiding (get) -- To avoid a naming clash with Web.Spock.g
 import qualified Database.Persist as P -- We'll be using P.get later for GET /artwork/<id>.
 import Database.Persist.Sqlite hiding (get)
 import Database.Persist.TH
+import Network.Wai.Middleware.Static
 
 -- todo: creatTime and editTime
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
@@ -62,6 +62,7 @@ type Api = SpockM SqlBackend () () ()
 type ApiAction a = SpockAction SqlBackend () () a
 app :: Api
 app = do
+    do middleware (staticPolicy (addBase "static"))    
     get "artworks" $ do
         allArtworks <- runSql $ selectList [] [Asc ArtworkId]
         json allArtworks

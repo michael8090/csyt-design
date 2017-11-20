@@ -29,6 +29,8 @@ executable csyt-design-exe
                      , aeson
                      , text
                      , monad-logger
+                     , blaze-html
+                     , wai-middleware-static
                      , persistent
                      , persistent-sqlite
                      , persistent-template
